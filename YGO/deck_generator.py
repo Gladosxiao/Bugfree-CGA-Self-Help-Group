@@ -19,8 +19,11 @@ def analysis_cards_cdb(set_name_path, card_path):
     with open(set_name_path, "r", encoding='utf-8') as set_name_file:
         set_name_data = set_name_file.readlines()
     for set_name_line in set_name_data[1:]:
+        # if '#' not in set_name_line:
         line_data = set_name_line.split(' ')
-        series_name_dict[line_data[1]] = line_data[2].split('\t')[0].replace('\n', '')
+        series_name = line_data[2].split('\t')[0].replace('\n', '')
+        if eval(line_data[1]) < 0xfff:
+            series_name_dict[line_data[1]] = series_name
 
     with open(card_path, 'rb') as card_file:
         card_data = card_file.readlines()
@@ -41,31 +44,39 @@ def analysis_cards_cdb(set_name_path, card_path):
             if allowed_quantity == 0 or eval(set_name_index) == 0 or card_type & 0x4000:  # or card_type & 0x8008:
                 continue
 
+            if eval(set_name_index) > 0xfff:
+                set_name_index = str(hex(eval('0x' + set_name_index[-3:])))
+
             if card_type & 0x4802040:
-                card_dict[card_number] = [True, allowed_quantity]
+                card_dict[card_number] = [True, allowed_quantity, set_name_index]
             else:
-                card_dict[card_number] = [False, allowed_quantity]
+                card_dict[card_number] = [False, allowed_quantity, set_name_index]
 
             if set_name_index in series_name_dict.keys():
                 set_name = series_name_dict[set_name_index]
                 dictionary_append(series_dict, set_name, card_number)
-            elif '00' in set_name_index:
-                set_name_index_list = set_name_index[2:].split('00')
-                for set_name_index_item in set_name_index_list:
-                    if '0x' + set_name_index_item in series_name_dict.keys():
-                        set_name = series_name_dict['0x' + set_name_index_item]
-                        dictionary_append(series_dict, set_name, card_number)
-                    else:
-                        dictionary_append(series_dict, '0x' + set_name_index_item, card_number)
             else:
+                print(card_number, set_name_index)
                 dictionary_append(series_dict, set_name_index, card_number)
+
+    joint_items = []
+    with open("joint_set.txt", "r", encoding='utf-8') as joint_file:
+        joint_data = joint_file.readlines()
+    for joint_line in joint_data:
+        joint_items.append(joint_line.replace('\n', '').split('\t'))
+    for joint_item in joint_items:
+        key_item = joint_item[0]
+        for sub_item in joint_item[1:]:
+            if sub_item in series_dict.keys():
+                series_dict[key_item] = series_dict[key_item] + series_dict[sub_item]
+                del series_dict[sub_item]
 
     random_pool = {}
     for set_name in series_dict.keys():
-        if len(series_dict[set_name]) > 15:
+        if len(series_dict[set_name]) > 5:
             random_pool[set_name] = series_dict[set_name]
 
-    return card_dict, random_pool
+    return card_dict, series_dict
 
 
 def generate_deck_file():
@@ -78,26 +89,37 @@ def generate_deck_file():
     card_pool = series_random_pool[series_name]
     main_cards = []
     extra_cards = []
-    count = 0
-    while count < 100 * deck_length:
-        count += 1
+    side_card = []
+    while (len(main_cards) < deck_length or len(extra_cards) < 15) and len(card_pool) > 0:
         random_card_name = random.sample(card_pool, 1)[0]
-        extra, allowed_quantity = card_data_dict[random_card_name]
+        extra, allowed_quantity, _ = card_data_dict[random_card_name]
         if extra:
-            if len(extra_cards) < 15 and extra_cards.count(random_card_name) < allowed_quantity:
+            extra_cards_count = extra_cards.count(random_card_name)
+            if len(extra_cards) < 15 and extra_cards_count < allowed_quantity:
                 extra_cards.append(random_card_name)
+            else:
+                card_pool.remove(random_card_name)
         else:
-            if len(main_cards) < deck_length and main_cards.count(random_card_name) < allowed_quantity:
-                main_cards.append(random_card_name)
+            main_cards_count = main_cards.count(random_card_name)
+            side_cards_count = side_card.count(random_card_name)
+            if main_cards_count + side_cards_count < allowed_quantity:
+                if len(main_cards) < deck_length:
+                    main_cards.append(random_card_name)
+                elif len(side_card) < 15:
+                    side_card.append(random_card_name)
+                else:
+                    card_pool.remove(random_card_name)
+            else:
+                card_pool.remove(random_card_name)
 
-        if len(main_cards) == deck_length and len(extra_cards) == 15:
-            print(extra_cards)
-            break
-
-    deck = "#created by ygopro2\n#main\n" + "\n".join(main_cards) + "\n#extra\n" + "\n".join(extra_cards) + "\n!side\n"
+    deck = "#created by ygopro2"
+    deck += "\n#main\n" + "\n".join(main_cards)
+    deck += "\n#extra\n" + "\n".join(extra_cards)
+    deck += "\n!side\n" + "\n".join(side_card)
     with open(key_path + "\\deck\\" + deck_name, 'w') as deck_file:
         deck_file.write(str(deck))
-    print(deck_name, len(main_cards), len(extra_cards))
+
+    print(deck_name, len(card_pool), len(main_cards), len(extra_cards), len(side_card))
 
 
 def refresh():
