@@ -36,12 +36,12 @@ def analysis_cards_cdb(set_name_path, card_path):
             card_number = line_data[0]
             allowed_quantity = eval(line_data[1])
             set_name_index = line_data[3]
-            card_type = line_data[4]
+            card_type = eval(line_data[4])
 
-            if allowed_quantity == 0 or eval(set_name_index) == 0:
+            if allowed_quantity == 0 or eval(set_name_index) == 0 or card_type & 0x4000:  # or card_type & 0x8008:
                 continue
 
-            if eval(card_type) & 0x4802040:
+            if card_type & 0x4802040:
                 card_dict[card_number] = [True, allowed_quantity]
             else:
                 card_dict[card_number] = [False, allowed_quantity]
@@ -75,25 +75,26 @@ def generate_deck_file():
     deck_name = deck_name_entry.get()
     deck_length = int(deck_length_entry.get())
 
-    # Generate the deck content
     card_pool = series_random_pool[series_name]
     main_cards = []
     extra_cards = []
     count = 0
-    while len(main_cards) < deck_length:
+    while count < 100 * deck_length:
+        count += 1
         random_card_name = random.sample(card_pool, 1)[0]
         extra, allowed_quantity = card_data_dict[random_card_name]
-        if extra and len(extra_cards) < 15:
-            if extra_cards.count(random_card_name) < allowed_quantity:
+        if extra:
+            if len(extra_cards) < 15 and extra_cards.count(random_card_name) < allowed_quantity:
                 extra_cards.append(random_card_name)
         else:
-            if main_cards.count(random_card_name) < allowed_quantity:
+            if len(main_cards) < deck_length and main_cards.count(random_card_name) < allowed_quantity:
                 main_cards.append(random_card_name)
-        count += 1
-        if count > 10 * deck_length:
+
+        if len(main_cards) == deck_length and len(extra_cards) == 15:
+            print(extra_cards)
             break
 
-    deck = "#created by ygopro2\n#main\n" + "\n".join(main_cards) + "#extra\n" + "\n".join(extra_cards) + "!side\n"
+    deck = "#created by ygopro2\n#main\n" + "\n".join(main_cards) + "\n#extra\n" + "\n".join(extra_cards) + "\n!side\n"
     with open(key_path + "\\deck\\" + deck_name, 'w') as deck_file:
         deck_file.write(str(deck))
     print(deck_name, len(main_cards), len(extra_cards))
@@ -134,5 +135,7 @@ if __name__ == "__main__":
 
     Button(deck_generator, text="验证血统", command=refresh).grid(column=1, row=21)
     Button(deck_generator, text="Yu-Gi-Oh！", command=generate_deck_file).grid(column=2, row=21)
+
+    refresh()
 
     deck_generator.mainloop()
