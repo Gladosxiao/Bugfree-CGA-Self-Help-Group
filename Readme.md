@@ -17,7 +17,7 @@
 
 deck_generator.exe为生成器（按系列）
 
-在任意路径下运行随机器可随机器
+在任意路径下运行随机器可随机器，请将cards.txt和set_name.txt放置于与生成器同一目录下
 
 填写YGoPro2路径：…\\YGOPro2
 
