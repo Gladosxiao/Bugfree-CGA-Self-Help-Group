@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 F:
 cd F:\01 Codes\Python\YuGiOh

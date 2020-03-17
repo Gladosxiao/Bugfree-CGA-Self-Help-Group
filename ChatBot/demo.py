@@ -2,7 +2,7 @@
 import itchat
 from itchat.content import *
 
-from chat_bot import *
+from .chat_bot import *
 
 
 def content_analysis(content):
@@ -18,7 +18,7 @@ def content_analysis(content):
     else:
         result = get_keyword_description(content)
         if result is None:
-            send_kammbqb(chat_room)
+            send_bqb(chat_room)
         else:
             chat_room.send(result)
 
