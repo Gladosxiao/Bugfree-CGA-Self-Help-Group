@@ -1,5 +1,7 @@
 .idea
+ChatBot/.idea
 ChatBot/data
 ChatBot/img
 ChatBot/itchat.pkl
+ChatBot/chat_bot/__pycache__
 

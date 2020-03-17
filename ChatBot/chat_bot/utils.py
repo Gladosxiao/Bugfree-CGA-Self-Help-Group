@@ -4,6 +4,8 @@ import random
 
 data_path = 'data/'
 img_path = 'img/'
+receive_dict = {'\u2005': '', '\xdf': 'ss', '\U0001f434': '[ma]'}
+send_dict = {'[ma]': '\U0001f434'}
 
 
 def get_time():
@@ -11,8 +13,14 @@ def get_time():
     return cur.hour, cur.minute
 
 
-def adjust_msg(msg):
-    return msg.replace('\u2005', '').strip()
+def adjust_msg(msg, receive=True):
+    if receive:
+        for key in receive_dict.keys():
+            msg = msg.replace(key, receive_dict[key])
+    else:
+        for key in send_dict.keys():
+            msg = msg.replace(key, send_dict[key])
+    return msg.strip()
 
 
 def send_bqb(chat_room):

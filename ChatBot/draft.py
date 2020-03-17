@@ -1,5 +1,5 @@
-import wordcloud
 import jieba
-import cv2
+import wordcloud
 
-
+a = 'shabsly'
+b = list(jieba.cut(a))

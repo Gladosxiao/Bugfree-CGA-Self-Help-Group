@@ -14,7 +14,7 @@ class ReplyDict(object):
         return self.reply[keyword]
 
     def refresh_reply_dict(self, content):
-        result = re.split('[:：]', content)
+        result = re.split('[:：]', content.replace('\n', ''))
         self.reply[result[0]] = result[1]
         self.save_reply_dict()
 

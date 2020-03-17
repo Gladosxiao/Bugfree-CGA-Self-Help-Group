@@ -15,7 +15,8 @@ def get_keyword_description(wd):
         return None
     else:
         start, end = result.span()
-        return html_content[start + 34:end - 2]
+        description = html_content[start + 34:end - 2]
+        return description  # if len(description) < 25 else description[:24] + '...'
 
 
 def append_text(seq):
@@ -26,14 +27,17 @@ def append_text(seq):
 def send_keyword_cloud(chat_room, send_img=True):
     with open(data_path + 'text.txt') as text:
         cut_text = jieba.cut(text.read())
-    cloud = wordcloud.WordCloud(font_path=data_path + "type.ttf",
+    cloud = wordcloud.WordCloud(scale=4,
+                                font_path=data_path + "type.ttf",
                                 background_color='white',
-                                mask=cv2.imread(img_path + "mask.jpg"),
-                                max_words=1000, max_font_size=20)
+                                # mask=cv2.imread(img_path + "mask.jpg"),
+                                max_words=2000, max_font_size=25)
     cloud.generate(" ".join(cut_text))
-    cloud.to_file(img_path + "cloud.png")
     if send_img:
+        cloud.to_file(img_path + "cloud.png")
         chat_room.send_image("img/cloud.png")
+    else:
+        return list(cloud.words_.keys())[0:10]
 
 
 if __name__ == "__main__":
