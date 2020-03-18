@@ -23,6 +23,11 @@ def adjust_msg(msg, receive=True):
     return msg.strip()
 
 
+def append_text(seq):
+    with open(data_path + 'text.txt', 'a+') as text_file:
+        text_file.writelines(seq + '\n')
+
+
 def send_bqb(chat_room):
     image_sort = random.sample(os.listdir(img_path + 'bqb/'), 1)[0] + '/'
     bqb_name = random.sample(os.listdir(img_path + 'bqb/' + image_sort), 1)[0]
