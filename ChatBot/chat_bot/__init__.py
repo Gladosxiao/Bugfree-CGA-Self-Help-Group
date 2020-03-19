@@ -1,3 +1,3 @@
-from .reply_dict import ReplyDict
-from .utils import *
-from .word_analysis import *
+from .utils import teardown_msg, data_path
+from .content_analysis import content_analysis
+from .console_analysis import console_analysis

@@ -1,5 +1,5 @@
-import re
-from .utils import data_path
+from re import split
+from chat_bot.utils import data_path
 
 
 class ReplyDict(object):
@@ -14,7 +14,7 @@ class ReplyDict(object):
         return self.reply[keyword]
 
     def refresh_reply_dict(self, content):
-        result = re.split('[:：]', content.replace('\n', ''))
+        result = split('[:：]', content.replace('\n', ''))
         self.reply[result[0]] = result[1]
         self.save_reply_dict()
 
@@ -24,17 +24,12 @@ class ReplyDict(object):
                 result = line.split('\t')
                 if len(result) == 2:
                     self.reply[result[0]] = result[1][:-1]
-        # for keyword in self.reply.keys():
-        #     print("%s\t%s" % (keyword, self.reply[keyword]))
 
     def save_reply_dict(self):
-        try:
-            with open(data_path + 'reply.txt', 'w+') as reply_dict_file:
-                for keyword in self.reply.keys():
-                    if keyword != '':
-                        reply_dict_file.writelines(keyword + '\t' + self.reply[keyword] + '\n')
-        except UnicodeEncodeError as e:
-            print(e)
+        with open(data_path + 'reply.txt', 'w+') as reply_dict_file:
+            for keyword in self.reply.keys():
+                if keyword != '':
+                    reply_dict_file.writelines(keyword + '\t' + self.reply[keyword] + '\n')
 
 
 if __name__ == "__main__":
