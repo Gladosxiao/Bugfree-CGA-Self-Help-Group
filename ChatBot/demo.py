@@ -24,14 +24,14 @@ def _(msg):
         else:
             with open(data_path + 'text.txt', 'a+') as file:
                 file.writelines(' '.join(word_list) + '\n')
-    elif 'bot' in msg.user.nickName:
-        console_analysis(bot_test, msg.content)
+    # elif 'bot' in msg.user.nickName:
+    #     console_analysis(bot_test, msg.content)
 
 
 if __name__ == "__main__":
     itchat.auto_login(hotReload=True)
     chat_group_name = 'bug-free'
-    bot_test = itchat.search_chatrooms(name='bot')[0]
+    # bot_test = itchat.search_chatrooms(name='bot')[0]
     chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
     # chat_group = bot_test
     itchat.run(True)
