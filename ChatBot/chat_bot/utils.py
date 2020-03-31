@@ -9,4 +9,4 @@ def teardown_msg(msg):
     for key, value in posseg.cut(msg.replace('@bug-free群聊bot', '')):
         if len(key) > 1 and value not in ['c', 'm', 'p', 'q', 'r', 'w', 'x', 'y', 'z', 'un', ]:
             msg_data.append(key)
-    return msg_data
+    return list(set(msg_data))

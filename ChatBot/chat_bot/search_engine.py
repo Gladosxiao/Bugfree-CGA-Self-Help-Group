@@ -19,5 +19,5 @@ def search_reply(wd):
     result_path = re.search('<div id="r-(\d+\.\d+)', html_content, flags=0).group(1)
     description = ''.join(books.xpath('//*[@id="r-' + result_path + '"]/div/h2/a/text()'))
     link_url = ''.join(books.xpath('//*[@id="r-' + result_path + '"]/div/div[1]/div/a/span[1]/text()'))
-    result = '已为您找到相关信息：\n%s\n%s' % (description, link_url)
+    result = '已为您找到相关信息：\n%s\n%s' % (description, link_url.replace("...", ""))
     return result.replace('\t', '')
