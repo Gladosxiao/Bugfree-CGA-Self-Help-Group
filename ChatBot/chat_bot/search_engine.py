@@ -24,3 +24,15 @@ def search_reply(wd):
             description = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/h2/a/text()'))
             result = '已为您找到相关信息：\n%s\n%s' % (description, link_url.replace("...", ""))
             return result.replace('\t', '')
+
+
+def stock(chat_room, wd):
+    key = 'sz' if '深' in wd else 'hk' if '港' in wd else 'sh'
+    search_url = 'http://hq.sinajs.cn/list=' + key + re.search("\d+", wd).group(0)
+    html_content = requests.get(search_url, headers=headers).content.decode('gbk')
+    info = '{}\n今开{}\n昨收{}\n当前{}\n今日最高{}\n今日最低{}'.format(*html_content.split('"')[1].split(','))
+    chat_room.send(info)
+
+
+if __name__ == "__main__":
+    pass
