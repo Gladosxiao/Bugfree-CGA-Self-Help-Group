@@ -4,6 +4,9 @@ from itchat.content import *
 
 from chat_bot import *
 
+last_msg = None
+last_sender = None
+
 
 @itchat.msg_register(TEXT, isGroupChat=True)
 def _(msg):
@@ -17,32 +20,27 @@ def _(msg):
         'ActualNickName', 'IsAt', 'ActualUserName', 'User', 'Type', 'Text'
     """
     if chat_group_name in msg.user.nickName:
-        if globals()['last_msg'] == msg.content and globals()['last_sender'] != msg.actualNickName:
-            globals()['last_msg'] = None
-            globals()['last_sender'] = None
+        global last_msg, last_sender
+        print("%s, Sender:%s, Msg:%s" % (msg.createTime, msg.actualNickName, msg.content))
+        if 25140 <= msg.createTime % 86400 <= 25200:
+            print("\tLeetcode日常")
+            return "多人在线史诗巨作Leetcode美服又更新辣,是兄弟就来刷本!"
+        elif last_msg == msg.content and last_sender != msg.actualNickName:
+            last_sender, last_msg = None, None
             print("\tNeed to +1:", msg.content)
             return msg.content
         else:
-            globals()['last_sender'] = msg.actualNickName
-            globals()['last_msg'] = msg.content
+            last_sender, last_msg = msg.actualNickName, msg.content
             word_list = teardown_msg(msg.content)
-            print("%s, Sender:%s, Msg:%s, Key Words:%s"
-                  % (msg.createTime, msg.actualNickName, msg.content, ' '.join(word_list)))
+            print('\tNeed to reply:%s\n' % word_list)
             if '@bug-free群聊bot' in msg.content:
-                if len(word_list) == 0:
-                    chat_group.send_image('img/01.jpg')
-                    # chat_group.send("本猫猫没有听懂你在说什么喵")
-                else:
-                    print('\tNeed to reply:%s\n' % word_list)
-                    content_analysis(chat_group, word_list)
+                content_analysis(chat_group, word_list)
             elif len(word_list) > 0:
                 with open(data_path + 'text.txt', 'a+') as file:
                     file.writelines(' '.join(word_list) + '\n')
 
 
 if __name__ == "__main__":
-    last_msg = None
-    last_sender = None
     itchat.auto_login(hotReload=True)
     chat_group_name = 'bug-free'
     chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
