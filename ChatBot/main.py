@@ -6,9 +6,6 @@ from content_analysis import content_analysis
 from search_engine import search_stock
 from utils import teardown_msg
 
-last_msg = None
-last_sender = None
-
 
 @itchat.msg_register(TEXT, isGroupChat=True)
 def _(msg):
@@ -22,9 +19,7 @@ def _(msg):
         'ActualNickName', 'IsAt', 'ActualUserName', 'User', 'Type', 'Text'
     """
     if chat_group_name in msg.user.nickName:
-        print(msg)
         print("%s, Sender:%s, Msg:%s" % (msg.createTime, msg.actualNickName, msg.content))
-        # Auto +1
         global last_msg, last_sender
         if last_msg == msg.content and last_sender != msg.actualNickName:
             last_sender, last_msg = None, None
@@ -43,12 +38,14 @@ def _(msg):
                 else:
                     content_analysis(chat_group, word_list)
             elif len(word_list) > 0:
-                with open('data/text.txt', 'a+') as file:
+                with open('text.txt', 'a+') as file:
                     file.writelines(' '.join(word_list) + '\n')
 
 
-if __name__ == "__main__":
-    itchat.auto_login(hotReload=True)
-    chat_group_name = 'bug-free'
-    chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
-    itchat.run(True)
+chat_group_name = 'bug-free'
+last_msg = None
+last_sender = None
+
+itchat.auto_login(hotReload=True)
+chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
+itchat.run()
