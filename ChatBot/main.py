@@ -1,8 +1,10 @@
 # encoding: utf-8
 import itchat
-from itchat.content import *
+from itchat.content import TEXT
 
-from chat_bot import *
+from content_analysis import content_analysis
+from search_engine import search_stock
+from utils import teardown_msg
 
 last_msg = None
 last_sender = None
@@ -20,6 +22,7 @@ def _(msg):
         'ActualNickName', 'IsAt', 'ActualUserName', 'User', 'Type', 'Text'
     """
     if chat_group_name in msg.user.nickName:
+        print(msg)
         print("%s, Sender:%s, Msg:%s" % (msg.createTime, msg.actualNickName, msg.content))
         # Auto +1
         global last_msg, last_sender
@@ -29,20 +32,19 @@ def _(msg):
             return msg.content
         else:
             last_sender, last_msg = msg.actualNickName, msg.content
-
-        word_list = teardown_msg(msg.content)
-        if '@bug-free群聊bot' in msg.content:
-            if 25200 <= msg.createTime % 86400 <= 25200 + 60 * 10:
-                print("\tLeetcode日常")
-                return "多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!"
-            print('\tNeed to reply:%s\n' % word_list)
-            if "股票" in msg.content:
-                stock(chat_group, msg.content)
-            else:
-                content_analysis(chat_group, word_list)
-        elif len(word_list) > 0:
-            with open(data_path + 'text.txt', 'a+') as file:
-                file.writelines(' '.join(word_list) + '\n')
+            word_list = teardown_msg(msg.content)
+            if '@bug-free群聊bot' in msg.content:
+                if 25200 <= msg.createTime % 86400 <= 25200 + 60 * 10:
+                    print("\tLeetcode日常")
+                    return "多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!"
+                print('\tNeed to reply:%s\n' % word_list)
+                if "股票" in msg.content:
+                    return search_stock(msg.content)
+                else:
+                    content_analysis(chat_group, word_list)
+            elif len(word_list) > 0:
+                with open('data/text.txt', 'a+') as file:
+                    file.writelines(' '.join(word_list) + '\n')
 
 
 if __name__ == "__main__":
