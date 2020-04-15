@@ -6,11 +6,14 @@ from utils import img_path, send_keyword_cloud
 
 
 def content_analysis(chat_group, content):
+    flag = True
     if len(content) == 0 or len(content & {'表情', 'mmbqb', 'bqb'}) > 0:
+        flag = False
         chat_group.send_image(img_path + 'bqb/' + random.sample(os.listdir(img_path + 'bqb/'), 1)[0])
-    elif len(content & {'关键字', '关键词'}) > 0:
+    if len(content & {'关键字', '关键词'}) > 0:
+        flag = False
         send_keyword_cloud(chat_group)
-    else:
+    if flag:
         chat_group.send(search_reply('+'.join(content)) + search_description(''.join(content)))
 
 

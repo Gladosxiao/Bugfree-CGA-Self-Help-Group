@@ -16,6 +16,7 @@ def search_reply(wd):
         if '...' not in link_url:
             description = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/h2/a/text()'))
             return '已为您找到相关信息：\n{}\n{}'.format(description, link_url).replace('\t', '')
+    return '已为您找到相关信息：\n'
 
 
 def search_description(wd):
@@ -26,11 +27,28 @@ def search_description(wd):
 
 
 def search_stock(wd):
-    key = 'sz' if '深' in wd else 'hk' if '港' in wd else 'sh'
-    search_url = 'http://hq.sinajs.cn/list=' + key + re.search("[\d]{6}", wd).group(0)
-    html_content = requests.get(search_url, headers=headers).content.decode('gbk')
-    return '{}\n今开{}\n昨收{}\n当前{}\n今日最高{}\n今日最低{}'.format(*html_content.split('"')[1].split(','))
+    if '美' in wd:
+        code = re.search("[a-z]+", wd.replace('@bug-free群聊bot', '').lower())
+        if code is None:
+            return "本喵喵没有找到股票代码诶"
+        search_url = 'http://hq.sinajs.cn/list=gb_' + code.group(0)
+        html_content = requests.get(search_url, headers=headers).content.decode('gbk').split('"')[1].split(',')
+        return "不存在此股票代码喵" if len(html_content) == 0 else '{}\n现价{}\n昨收{}\n今开{}\n今日最高{}\n今日最低{}' \
+            .format(*html_content[:2], html_content[26], *html_content[5:8])
+    else:
+        code = re.search("[\d]{6}", wd)
+        if code is None:
+            return "本喵喵没有找到股票代码诶"
+        key = 'sz' if '深' in wd else 'hk' if '港' in wd else 'sh'
+        search_url = 'http://hq.sinajs.cn/list=' + key + code.group(0)
+        html_content = requests.get(search_url, headers=headers).content.decode('gbk').split('"')[1].split(',')
+        if '港' in wd:
+            return "不存在此股票代码喵" if len(html_content) == 0 \
+                else '{}\n今开{}\n昨收{}\n今日最高{}\n今日最低{}\n现价{}'.format(*html_content[1:])
+        else:
+            return "不存在此股票代码喵" if len(html_content) == 0 \
+                else '{}\n今开{}\n昨收{}\n现价{}\n今日最高{}\n今日最低{}'.format(*html_content)
 
 
 if __name__ == "__main__":
-    print(search_stock("000001"))
+    print(search_stock("美zoominc"))

@@ -31,10 +31,10 @@ def _(msg):
             if '@bug-free群聊bot' in msg.content:
                 if 25200 <= msg.createTime % 86400 <= 25200 + 60 * 10:
                     print("\tLeetcode日常")
-                    return "多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!"
+                    chat_group.send("多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!")
                 print('\tNeed to reply:%s\n' % word_list)
-                if "股票" in msg.content:
-                    return search_stock(msg.content)
+                if "股" in msg.content:
+                    chat_group.send(search_stock(msg.content))
                 else:
                     content_analysis(chat_group, word_list)
             elif len(word_list) > 0:
@@ -42,10 +42,11 @@ def _(msg):
                     file.writelines(' '.join(word_list) + '\n')
 
 
-chat_group_name = 'bug-free'
-last_msg = None
-last_sender = None
+if __name__ == '__main__':
+    chat_group_name = 'bug-free'
+    last_msg = None
+    last_sender = None
 
-itchat.auto_login(hotReload=True)
-chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
-itchat.run()
+    itchat.auto_login(hotReload=True)
+    chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
+    itchat.run()

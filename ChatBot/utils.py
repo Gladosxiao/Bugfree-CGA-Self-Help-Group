@@ -3,10 +3,12 @@ import wordcloud
 
 img_path = 'img/'
 v_stop = ['c', 'd', 'm', 'p', 'q', 'r', 'w', 'x', 'y', 'z', 'un', ]
+w_filter = ['@bug-free群聊bot', '众神', 'Blanc',
+            '知道', '现在', '应该', '没有', '感觉', '不要', '觉得', '今天', '不会', '出来', ]
 
 
 def teardown_msg(msg):
-    for item in ['@bug-free群聊bot', '众神', 'Blanc']:
+    for item in w_filter:
         msg = msg.replace(item, '')
     return set(key for key, value in jp.cut(msg) if len(key) > 1 and value not in v_stop)
 
