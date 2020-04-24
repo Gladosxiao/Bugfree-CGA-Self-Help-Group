@@ -16,8 +16,8 @@ def teardown_msg(msg):
 def send_keyword_cloud(chat_group):
     with open('text.txt') as text_file:
         chat_text = text_file.readlines()
-    if len(chat_text) > 500:
-        chat_text = chat_text[-500:]
+    if len(chat_text) > 1000:
+        chat_text = chat_text[-1000:]
     cloud = wordcloud.WordCloud(font_path="type.ttf", width=480, height=270, scale=2,
                                 max_words=1000, min_font_size=4, background_color='white')
     cloud.generate(' '.join(chat_text)).to_file(img_path + "cloud.jpg")
