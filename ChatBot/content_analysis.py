@@ -4,6 +4,8 @@ import random
 from search_engine import search_description, search_reply
 from utils import img_path, send_keyword_cloud
 
+artificial_hot_search = "饼哥生日快乐"
+
 
 def content_analysis(chat_group, content):
     flag = True
@@ -12,7 +14,7 @@ def content_analysis(chat_group, content):
         chat_group.send_image(img_path + 'bqb/' + random.sample(os.listdir(img_path + 'bqb/'), 1)[0])
     if len(content & {'关键字', '关键词'}) > 0:
         flag = False
-        send_keyword_cloud(chat_group)
+        send_keyword_cloud(chat_group, artificial_hot_search)
     if flag:
         chat_group.send(search_reply('+'.join(content)) + search_description(''.join(content)))
 
