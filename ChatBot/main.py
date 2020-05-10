@@ -36,13 +36,15 @@ def _(msg):
                 if "股" in msg.content:
                     chat_group.send(search_stock(msg.content))
                 else:
-                    content_analysis(chat_group, word_list)
+                    content_analysis(chat_group, word_list, artificial_hot_search)
             elif len(word_list) > 0:
                 with open('text.txt', 'a+') as file:
                     file.writelines(' '.join(word_list) + '\n')
 
 
 if __name__ == '__main__':
+    artificial_hot_search = None
+
     chat_group_name = 'bug-free'
     last_msg = None
     last_sender = None

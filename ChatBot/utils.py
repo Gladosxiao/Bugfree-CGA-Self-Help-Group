@@ -8,10 +8,11 @@ v_stop = ['c', 'd', 'm', 'p', 'q', 'r', 'w', 'x', 'y', 'z', 'un', ]
 w_filter = ['@bug-free群聊bot', '众神', 'Blanc',
             '知道', '现在', '应该', '没有', '感觉',
             '不要', '觉得', '今天', '不会', '出来',
+            'ich', 'hei',
             # "DINGDING", "群主",
             # 'xdg', 'XDG', "GlaDosX",
             # '落雨', '沈博',
-            # '鱼鱼', 'YZX', 'yzx', 'ich', 'hei',
+            # '鱼鱼', 'YZX', 'yzx',
             # 'bg', '饼哥',
             # 'beig', '北哥',
             # '雪松', '松松',
@@ -32,7 +33,7 @@ def send_keyword_cloud(chat_group, bb=None):
         chat_text = chat_text[-1000:]
     if bb:
         chat_len = len(chat_text)
-        for _ in range(chat_len // 10):
+        for _ in range(chat_len // 20):
             chat_text[randint(0, chat_len - 1)] = bb
     cloud = wordcloud.WordCloud(font_path="type.ttf", width=480, height=270, scale=2,
                                 max_words=1000, min_font_size=4, background_color='white')

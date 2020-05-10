@@ -4,10 +4,8 @@ import random
 from search_engine import search_description, search_reply
 from utils import img_path, send_keyword_cloud
 
-artificial_hot_search = "饼哥生日快乐"
 
-
-def content_analysis(chat_group, content):
+def content_analysis(chat_group, content, artificial_hot_search):
     flag = True
     if len(content) == 0 or len(content & {'表情', 'mmbqb', 'bqb'}) > 0:
         flag = False
