@@ -1,4 +1,6 @@
 # encoding: utf-8
+from winsound import Beep
+
 import itchat
 from itchat.content import TEXT
 
@@ -19,23 +21,25 @@ def _(msg):
         'ActualNickName', 'IsAt', 'ActualUserName', 'User', 'Type', 'Text'
     """
     if chat_group_name in msg.user.nickName:
-        print("%s, Sender:%s, Msg:%s" % (msg.createTime, msg.actualNickName, msg.content))
         global last_msg, last_sender
+        if '众神' in msg.content:
+            Beep(500, 1000)
         if last_msg == msg.content and last_sender != msg.actualNickName:
             last_sender, last_msg = None, None
-            print("\tNeed to +1:", msg.content)
+            print("%s, Sender:%s, Msg:%s [Need to +1]" % (msg.createTime, msg.actualNickName, msg.content))
             return msg.content
         else:
             last_sender, last_msg = msg.actualNickName, msg.content
             word_list = teardown_msg(msg.content)
+            print("%s, Sender:%s, Msg:%s [%s]" % (msg.createTime, msg.actualNickName, msg.content, ' '.join(word_list)))
             if '@bug-free群聊bot' in msg.content:
                 if 25200 <= msg.createTime % 86400 <= 25200 + 60 * 30:
-                    print("\tLeetcode日常")
                     chat_group.send("多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!")
                 print('\tNeed to reply:%s\n' % word_list)
                 if "股" in msg.content:
                     chat_group.send(search_stock(msg.content))
                 else:
+                    # artificial_hot_search = msg.user.nickName
                     content_analysis(chat_group, word_list, artificial_hot_search)
             elif len(word_list) > 0:
                 with open('text.txt', 'a+') as file:
