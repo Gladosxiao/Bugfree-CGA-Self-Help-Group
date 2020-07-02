@@ -1,6 +1,5 @@
 .idea
 __pycache__
-img
-text.txt
-type.ttf
+img/
+log/
 itchat.pkl

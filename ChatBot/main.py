@@ -1,12 +1,16 @@
-# encoding: utf-8
-from winsound import Beep
-
 import itchat
 from itchat.content import TEXT
+from apscheduler.schedulers.background import BackgroundScheduler
 
-from content_analysis import content_analysis
-from search_engine import search_stock
-from utils import teardown_msg
+from responser import response
+
+
+def remind_water():
+    chat_group.send_image("./img/work/water.jpg")
+
+
+def remind_sport():
+    chat_group.send("喵呜~爆肝学(shui)习(qun)也要记得动一动鸭~")
 
 
 @itchat.msg_register(TEXT, isGroupChat=True)
@@ -21,38 +25,33 @@ def _(msg):
         'ActualNickName', 'IsAt', 'ActualUserName', 'User', 'Type', 'Text'
     """
     if chat_group_name in msg.user.nickName:
-        global last_msg, last_sender
-        if '众神' in msg.content:
-            Beep(500, 1000)
-        if last_msg == msg.content and last_sender != msg.actualNickName:
-            last_sender, last_msg = None, None
-            print("%s, Sender:%s, Msg:%s [Need to +1]" % (msg.createTime, msg.actualNickName, msg.content))
-            return msg.content
+        day_time = msg.createTime % 86400
+        hour, minute, second = (day_time // 3600 + 8) % 24, (day_time % 3600) // 60, day_time % 60
+
+        global last_msg
+        if last_msg[0] != msg.actualNickName and last_msg[1] == msg.content:
+            last_msg = None, None
+            teardown, reply, value = "[Need to +1]", 1, msg.content
         else:
-            last_sender, last_msg = msg.actualNickName, msg.content
-            word_list = teardown_msg(msg.content)
-            print("%s, Sender:%s, Msg:%s [%s]" % (msg.createTime, msg.actualNickName, msg.content, ' '.join(word_list)))
-            if '@bug-free群聊bot' in msg.content:
-                if 25200 <= msg.createTime % 86400 <= 25200 + 60 * 30:
-                    chat_group.send("多人在线史诗巨作Leetcode美服又更新辣,是兄弟就一起来刷本!")
-                print('\tNeed to reply:%s\n' % word_list)
-                if "股" in msg.content:
-                    chat_group.send(search_stock(msg.content))
-                else:
-                    # artificial_hot_search = msg.user.nickName
-                    content_analysis(chat_group, word_list, artificial_hot_search)
-            elif len(word_list) > 0:
-                with open('text.txt', 'a+') as file:
-                    file.writelines(' '.join(word_list) + '\n')
+            last_msg = msg.actualNickName, msg.content
+            teardown, reply, value = response(msg.content)
+
+        if reply == 1:
+            chat_group.send(value)
+        elif reply == 2:
+            chat_group.send_image(value)
+        print(f"{hour}:{minute}:{second}, Sender:{msg.actualNickName}, Msg:{msg.content}, {teardown}")
 
 
 if __name__ == '__main__':
-    artificial_hot_search = None
-
-    chat_group_name = 'bug-free'
-    last_msg = None
-    last_sender = None
-
     itchat.auto_login(hotReload=True)
+    chat_group_name = 'bug-free'
+    last_msg = None, None
     chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(remind_water, 'cron', hour='8-22', minute='0', second='0')
+    scheduler.add_job(remind_sport, 'cron', hour='8-22', minute='30', second='0')
+
+    scheduler.start()
     itchat.run()
