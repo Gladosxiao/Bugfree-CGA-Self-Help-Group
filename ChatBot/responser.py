@@ -13,7 +13,7 @@ word_filter = ['@bug-free群聊bot', '哈', '哈哈', '哈哈哈', '哈哈哈哈
 speech_filter = ['c', 'd', 'm', 'p', 'q', 'r', 'w', 'x', 'y', 'z', 'un', ]
 headers = {"User-Agent": "User-Agent:Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0;"}
 
-encoding = 'utf-8'  # 'unicode_escape'
+encoding = 'utf-8'
 
 
 def generate_keyword_cloud():
@@ -71,16 +71,14 @@ def search_reply(msg, td):
 
 def response(message):
     # save
-    with open('./log/message.txt', 'a+', encoding=encoding) as file:
-        file.writelines(message + '\n')
+    # with open('./log/message.txt', 'a+', encoding=encoding) as file:
+    #     file.writelines(message + '\n')
 
     # teardown
     teardown = message
     for item in word_filter:
         teardown = teardown.replace(item, '')
     teardown = set(key for key, value in jp.cut(teardown) if len(key) > 1 and value not in speech_filter)
-    with open('./log/teardown.txt', 'a+', encoding=encoding) as file:
-        file.writelines(' '.join(teardown) + '\n')
 
     if '@bug-free群聊bot' in message:
         # bqb
@@ -95,7 +93,18 @@ def response(message):
         # reply
         message = message.replace('@bug-free群聊bot', '').replace('\u2005 ', '')
         return teardown, 1, search_reply(message, teardown)
-    return teardown, 0, 0
+    else:
+        try:
+            with open('./log/test.txt', 'w', encoding=encoding) as test_file:
+                test_file.writelines(' '.join(teardown) + '\n')
+            with open('./log/test.txt', encoding=encoding) as test_file:
+                test_file.readlines()
+        except Exception as e:
+            return teardown, 1, e
+        else:
+            with open('./log/teardown.txt', 'a+', encoding=encoding) as file:
+                file.writelines(' '.join(teardown) + '\n')
+            return teardown, 0, 0
 
 
 if __name__ == "__main__":
