@@ -7,7 +7,7 @@ from lxml import etree
 import jieba.posseg as jp
 import wordcloud
 
-word_filter = ['@bug-free群聊bot', '哈', '哈哈', '哈哈哈', '哈哈哈哈',
+word_filter = ['@bug-free群聊bot', '哈', '哈哈', '哈哈哈', '哈哈哈哈', '众神', 'Blanc',
                '知道', '现在', '应该', '没有', '感觉', '不要', '觉得', '今天', '不会', '出来',
                '不行', '不能', '可能', '是不是', '还有', '意思', '只能', '直接', '主要', '时候', ]
 speech_filter = ['c', 'd', 'm', 'p', 'q', 'r', 'w', 'x', 'y', 'z', 'un', ]
