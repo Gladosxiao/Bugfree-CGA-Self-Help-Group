@@ -19,6 +19,7 @@ encoding = 'utf-8'
 def generate_keyword_cloud():
     with open('./log/teardown.txt', encoding=encoding) as text_file:
         chat_text = text_file.readlines()
+
     chat_len = len(chat_text)
     if chat_len > 1000:
         chat_text = chat_text[-1000:]
@@ -87,8 +88,12 @@ def response(message):
 
         # key word
         if len(teardown & {'关键字', '关键词', '搜榜'}) > 0:
-            generate_keyword_cloud()
-            return teardown, 2, "./img/work/cloud.jpg"
+            try:
+                generate_keyword_cloud()
+            except Exception as e:
+                return teardown, 1, str(e)
+            else:
+                return teardown, 2, "./img/work/cloud.jpg"
 
         # reply
         message = message.replace('@bug-free群聊bot', '').replace('\u2005 ', '')
