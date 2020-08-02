@@ -34,16 +34,22 @@ def search_reply(msg, td):
     search_url = 'https://baike.baidu.com/item/' + ' '.join(td)
     html_content = requests.get(search_url, headers=headers).content.decode('utf8')
     result = re.search('<meta name="description" content="(.*)">', html_content, flags=0)
-    reply_info = "已为您找到相关信息:" if result is None else f"已为您找到相关信息:\n{result.group(1)}"
+    reply_info = "喵喵扒拉到了这个!\n" + "" if result is None else result.group(1)
     # information
     search_url = 'https://www.dogedoge.com/results?q=' + msg.replace(' ', '+')
     html_content = requests.get(search_url, headers=headers).content.decode('utf8')
     books = etree.HTML(html_content.replace('<em>', '').replace('<b>', ''))
-    result = re.findall('<div id="r-(\d+\.\d+)', html_content)[0]
-    link_url = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/div[1]/div/a/span[1]/text()')).replace('...', '')
-    description = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/h2/a/text()')).replace('\t', '')
-    reply_info += f'\n{description}\n{link_url}'
-    return reply_info
+    # result = re.findall('<div id="r-(\d+\.\d+)', html_content)[0]
+    for result in re.findall('<div id="r-(\d+\.\d+)', html_content):
+        link_url = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/div[1]/div/a/span[1]/text()'))
+        if '...' not in link_url:
+            description = ''.join(books.xpath('//*[@id="r-' + result + '"]/div/h2/a/text()')).replace('\t', '')
+            reply_info += f'\n{description}\n{link_url}\n嘿嘿嘿是不是要夸奖喵喵呢~'
+            return reply_info
+    if result is None:
+        return "呼喵?什么都没有扒拉到诶"
+    else:
+        return reply_info + "\n嘿嘿嘿是不是要夸奖喵喵呢~"
 
 
 # def search_stock(wd):

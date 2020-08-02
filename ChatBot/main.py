@@ -1,3 +1,7 @@
+from random import random
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
+
 import itchat
 from itchat.content import TEXT
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -6,9 +10,12 @@ from responser import response, generate_keyword_cloud
 
 
 def good_morning():
-    chat_group.send("早上好!元气满满的一天从打卡开始~")
-    generate_keyword_cloud()
-    chat_group.send_image("./img/work/cloud.jpg")
+    if random() < 0.5:
+        chat_group.send("早上好!元气满满的一天从打卡开始~")
+        generate_keyword_cloud()
+        chat_group.send_image("./img/work/cloud.jpg")
+    else:
+        chat_group.send_image("./img/work/morning.jpg")
 
 
 def remind_food():
@@ -47,7 +54,9 @@ def _(msg):
         global last_msg
         if last_msg[0] != msg.actualNickName and last_msg[1] == msg.content:
             last_msg = None, None
-            teardown, reply, value = "[Need to +1]", 1, msg.content
+            teardown, reply, value = "[Need to +1]", 1, msg.content + "喵"
+        elif "#" in msg.content:
+            teardown, reply, value = None, 1, chat_bot.get_response(msg.content.replace("#", "")).text
         else:
             last_msg = msg.actualNickName, msg.content
             teardown, reply, value = response(msg.content)
@@ -60,11 +69,16 @@ def _(msg):
 
 
 if __name__ == '__main__':
+    chat_bot = ChatBot('喵喵')
+    trainer = ChatterBotCorpusTrainer(chat_bot)
+    trainer.train("chatterbot.corpus.chinese")
+    # chat_bot.get_response("Hello, how are you today?")
+
     itchat.auto_login(hotReload=True)
     chat_group_name = 'bug-free'
     last_msg = None, None
     chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
-    chat_group.send("喵喵复活啦!")
+    # chat_group.send("喵喵复活啦!")
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(good_morning, 'cron', hour='8', minute='0', second='0')
