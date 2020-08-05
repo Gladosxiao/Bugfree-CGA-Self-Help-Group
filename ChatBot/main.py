@@ -1,4 +1,6 @@
+import os
 from random import random
+
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 
@@ -68,17 +70,44 @@ def _(msg):
         print(f"{hour:02d}:{minute:02d}:{second:02d}, Sender:{msg.actualNickName}, Msg:{msg.content}, {teardown}")
 
 
+def wash():
+    encoding = 'utf-8'
+    with open('./log/message.txt', encoding=encoding) as text_file:
+        chat_text = text_file.readlines()
+
+    with open('./log/train.yml', 'w', encoding=encoding) as yml_file:
+        yml_file.writelines("categories:\n- BUGFREE\nconversations:\n")
+
+        index = 0
+        for word in chat_text:
+            flag = True
+            for item in word:
+                if item in ['-', '@', '「', '」', '[', ']'] or len(item.encode('utf-8')) > 3:
+                    flag = False
+                    break
+            if flag and len(word) > 3:
+                try:
+                    eval(word)
+                except SyntaxError:
+                    signal = "  - " if index % 2 else "- - "
+                    yml_file.writelines(signal + word.strip() + "\n")
+                    index += 1
+                except NameError:
+                    signal = "  - " if index % 2 else "- - "
+                    yml_file.writelines(signal + word.strip() + "\n")
+                    index += 1
+
+
 if __name__ == '__main__':
     chat_bot = ChatBot('喵喵')
     trainer = ChatterBotCorpusTrainer(chat_bot)
     trainer.train("chatterbot.corpus.chinese")
-    # chat_bot.get_response("Hello, how are you today?")
 
     itchat.auto_login(hotReload=True)
     chat_group_name = 'bug-free'
     last_msg = None, None
     chat_group = itchat.search_chatrooms(name=chat_group_name)[0]
-    # chat_group.send("喵喵复活啦!")
+    chat_group.send("喵喵复活啦!")
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(good_morning, 'cron', hour='8', minute='0', second='0')

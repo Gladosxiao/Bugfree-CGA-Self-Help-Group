@@ -34,7 +34,8 @@ def search_reply(msg, td):
     search_url = 'https://baike.baidu.com/item/' + ' '.join(td)
     html_content = requests.get(search_url, headers=headers).content.decode('utf8')
     result = re.search('<meta name="description" content="(.*)">', html_content, flags=0)
-    reply_info = "喵喵扒拉到了这个!\n" + "" if result is None else result.group(1)
+    reply_info = "喵喵扒拉到了这个!\n"
+    reply_info += "" if result is None else result.group(1)
     # information
     search_url = 'https://www.dogedoge.com/results?q=' + msg.replace(' ', '+')
     html_content = requests.get(search_url, headers=headers).content.decode('utf8')
@@ -78,8 +79,8 @@ def search_reply(msg, td):
 
 def response(message):
     # save
-    # with open('./log/message.txt', 'a+', encoding=encoding) as file:
-    #     file.writelines(message + '\n')
+    with open('./log/message.txt', 'a+', encoding=encoding) as file:
+        file.writelines(message + '\n')
 
     # teardown
     teardown = message
