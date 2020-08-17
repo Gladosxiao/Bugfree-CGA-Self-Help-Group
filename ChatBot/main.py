@@ -57,8 +57,8 @@ def _(msg):
         if last_msg[0] != msg.actualNickName and last_msg[1] == msg.content:
             last_msg = None, None
             teardown, reply, value = "[Need to +1]", 1, msg.content + "喵"
-        elif "#" in msg.content:
-            teardown, reply, value = None, 1, chat_bot.get_response(msg.content.replace("#", "")).text
+        # elif "#" in msg.content:
+        #     teardown, reply, value = None, 1, chat_bot.get_response(msg.content.replace("#", "")).text
         else:
             last_msg = msg.actualNickName, msg.content
             teardown, reply, value = response(msg.content)
@@ -72,7 +72,7 @@ def _(msg):
 
 def wash():
     encoding = 'utf-8'
-    with open('./log/message.txt', encoding=encoding) as text_file:
+    with open('./log/teardown.txt', encoding=encoding) as text_file:
         chat_text = text_file.readlines()
 
     with open('./log/train.yml', 'w', encoding=encoding) as yml_file:
@@ -80,12 +80,13 @@ def wash():
 
         index = 0
         for word in chat_text:
-            flag = True
-            for item in word:
-                if item in ['-', '@', '「', '」', '[', ']'] or len(item.encode('utf-8')) > 3:
-                    flag = False
-                    break
-            if flag and len(word) > 3:
+            # flag = True
+            # for item in word:
+            #     if item in ['-', '@', '「', '」', '[', ']', '{', '}','.',''] or len(item.encode('utf-8')) > 3:
+            #         flag = False
+            #         break
+            # if flag and len(word) > 3:
+            if len(word) > 1:
                 try:
                     eval(word)
                 except SyntaxError:
@@ -96,12 +97,16 @@ def wash():
                     signal = "  - " if index % 2 else "- - "
                     yml_file.writelines(signal + word.strip() + "\n")
                     index += 1
+    print("Finish washing.")
 
 
 if __name__ == '__main__':
-    chat_bot = ChatBot('喵喵')
-    trainer = ChatterBotCorpusTrainer(chat_bot)
-    trainer.train("chatterbot.corpus.chinese")
+    # wash()
+    # os.system("cp ./log/train.yml /home/gaozhong/miniconda2/envs/"
+    #           "chat/lib/python3.7/site-packages/chatterbot_corpus/data/chinese/train.yml")
+    # chat_bot = ChatBot('喵喵')
+    # trainer = ChatterBotCorpusTrainer(chat_bot)
+    # trainer.train("chatterbot.corpus.chinese")
 
     itchat.auto_login(hotReload=True)
     chat_group_name = 'bug-free'
