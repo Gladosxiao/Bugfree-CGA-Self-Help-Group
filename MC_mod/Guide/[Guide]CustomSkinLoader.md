@@ -51,4 +51,6 @@
 
 调整CustomSkinLoader.jso文件中的变量顺序
 
+## 其他皮肤服务器
+
 如果上述两个**皮肤服务器都不行**，还可以尝试https://skin.prinzeugen.net,http://fleey.org/,http://www.mcskin.cc/
