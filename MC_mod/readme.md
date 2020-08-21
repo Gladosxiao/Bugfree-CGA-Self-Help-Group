@@ -5,3 +5,7 @@
 请访问各Mod作者位于：https://www.curseforge.com/minecraft/mc-mods/ 的详情页面获取具体版权要求
 
 高清修复OptiFine：https://www.optifine.net/home
+
+*mod更新日志*
+- 20200821 增加Vein Miner [教程](/MC_mod/Guide/[Guide]VeinMiner.md)
+- 20200821 增加CustomSkinLoader [教程](/MC_mod/Guide/[Guide]CustomSkinLoader.md)
