@@ -1,6 +1,6 @@
-[官方原始教程][https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1292260-1-5-1-11-2-vein-miner-quickly-mine-veins-of-ore#entry25004277]
+[官方原始教程](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1292260-1-5-1-11-2-vein-miner-quickly-mine-veins-of-ore#entry25004277)
 
-*中文某网站翻译：*
+## 中文某网站翻译：
 
 矿脉矿工有几种模式，根据不同情况启用不同模式来获得更大的效率，可以为每位玩家指定不同的模式。
 
@@ -11,7 +11,7 @@
 
 你可以使用 ‘/veinminer‘ 命令来改变你的模式.比如输入’/veinminer enable ‘可以替换为 ‘‘ ‘disable;, ‘auto’; ‘sneak’; 或 ‘no_sneak’.使用 ‘/veinminer help enable‘ 查看帮助.
 
-*英文原贴复制粘贴：*
+## 英文原贴复制粘贴：
 
 Using
 To use Veinminer, you need to have Veinminer installed on the server (for single player games the client and the server are the same). You do not need to have Veinminer installed on the client, however it will provide reduced functionality to the clients that do not have it installed.
