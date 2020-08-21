@@ -1,4 +1,4 @@
-本仓库仅为个人服务器Mod更新只用
+本仓库仅为个人服务器Mod更新使用
 
 文件夹内Mod均来自[Curseforge](https://www.curseforge.com), Mod文件版权仍归于原作者所有
 
